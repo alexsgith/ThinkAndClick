@@ -1,27 +1,75 @@
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CardPrefabScript : MonoBehaviour
 {
     [SerializeField] private Image cardImage;
-    [SerializeField] private Sprite symbolSprite;
     [SerializeField] private Sprite cardBackSprite;
-    public bool isOpened = false;
-    
-    public void SetSymbol(Sprite sprite)
+    public Sprite symbolSprite;
+    public float flipSpeed = 10;
+    private bool isOpened = true;
+
+    private void OnEnable()
     {
-        cardImage.sprite = sprite;
+        GetComponent<Button>().onClick.AddListener(OnCardClicked);
+    }
+    private void OnDisable()
+    {
+        GetComponent<Button>().onClick.RemoveListener(OnCardClicked);
     }
 
-    public void OpenCard()
+    private void OnCardClicked()
     {
+        Debug.Log(CardManager.Instance.isCardFlipping+" "+ isOpened);
+        if(CardManager.Instance.isCardFlipping || isOpened)return;
+        CardManager.Instance.CardFlipCalled(this);
+        StartCoroutine(FlipCard());
+    }
+
+    public void SetSymbol(Sprite sprite)
+    {
+        symbolSprite = sprite;
         cardImage.sprite = symbolSprite;
-        isOpened = true;
     }
 
     public void CloseCard()
     {
-        cardImage.sprite = cardBackSprite;
-        isOpened = false;
+        if (!isOpened)return;
+        StartCoroutine(FlipCard());
+    }
+
+    IEnumerator FlipCard()
+    {
+        CardManager.Instance.isCardFlipping = true;
+        isOpened = !isOpened;
+        Debug.Log("Flipping card: " + gameObject.name + " to " + (isOpened ? "opened" : "closed"));
+        float totalRotation = 0f;
+        while (totalRotation <= 90f)
+        {
+            float rotationStep = flipSpeed * Time.deltaTime;
+            transform.Rotate(Vector3.up, rotationStep);
+            totalRotation += rotationStep;
+            yield return null;
+            Debug.Log("Total Rotation A: " + totalRotation);
+        }
+        cardImage.sprite = isOpened ? symbolSprite : cardBackSprite;
+        while (totalRotation >= 0f)
+        {
+            float rotationStep = flipSpeed * Time.deltaTime;
+            transform.Rotate(Vector3.up, -rotationStep);
+            totalRotation -= rotationStep;
+            yield return null;
+            Debug.Log("Total Rotation B: " + totalRotation);
+
+        }
+        transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+        CardManager.Instance.isCardFlipping = false;
+    }
+
+    public void RemoveCard()
+    {
+        GetComponent<Image>().color = Color.clear;
     }
 }
