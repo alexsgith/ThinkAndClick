@@ -16,6 +16,7 @@ public class CardManager : MonoBehaviour
     //Non-Serialized
     [NonSerialized] public bool isCardFlipping = false;
     [NonSerialized] public CardPrefabScript firstCard = null , secondCard = null ;
+    public Action CardMatchFound,WrongCardTurn, LevelOver;
     int gameRow=3 , gameColumn=2;
     List<Sprite> symbolPairs;
     List<CardPrefabScript> cardPrefabList=new();
@@ -62,6 +63,7 @@ public class CardManager : MonoBehaviour
     {
         RandomiseCards();
         ArrangeCards();
+        StartCoroutine(WaitAndCloseAllCards());
     }
 
     private void RandomiseCards()
@@ -123,21 +125,28 @@ public class CardManager : MonoBehaviour
         if (firstCard.symbolSprite == secondCard.symbolSprite)
         {
             Debug.Log("Card Match Found!");
+            CardMatchFound?.Invoke();
             StartCoroutine(WaitAndRemoveCard());
         }
         else
         {
             Debug.Log("Card No Match!");
-            StartCoroutine(WaitAndCloseCard());
+            WrongCardTurn?.Invoke();
+            StartCoroutine(WaitAndCloseTwoCard());
         }
     }
 
-    IEnumerator WaitAndCloseCard()
+    IEnumerator WaitAndCloseTwoCard()
     {
         yield return new WaitForSeconds(cardCheckDelay);
         firstCard.CloseCard();
         secondCard.CloseCard();
         firstCard = secondCard = null;
+    }
+    IEnumerator WaitAndCloseAllCards()
+    {
+        yield return new WaitForSeconds(cardCheckDelay);
+        foreach (var card in cardPrefabList) card.CloseCard();
     }
     IEnumerator WaitAndRemoveCard()
     {
@@ -148,5 +157,7 @@ public class CardManager : MonoBehaviour
         cardPrefabList.Remove(secondCard);
         isCardFlipping = false;
         firstCard = secondCard = null;
+        
+        if (cardPrefabList.Count ==0)LevelOver?.Invoke();
     }
 }
