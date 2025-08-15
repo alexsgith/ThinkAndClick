@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 //only current score is managed due to time restrict, future can impliment total score based system
@@ -19,15 +20,21 @@ public class ScoreManager : MonoBehaviour
 
     private void OnEnable()
     {
-        CardManager.Instance.CardMatchFound += IncrementMatches;
-        CardManager.Instance.WrongCardTurn += IncrementTurns;
-        CardManager.Instance.NewLevelStarted += IncrementLevel;
+        StartCoroutine(LateSubscribe());
     }
     private void OnDisable()
     {
         CardManager.Instance.CardMatchFound -= IncrementMatches;
         CardManager.Instance.WrongCardTurn -= IncrementTurns;
         CardManager.Instance.NewLevelStarted -= IncrementLevel;
+    }
+
+    IEnumerator LateSubscribe()
+    {
+        yield return new WaitForSeconds(0.2f);
+        CardManager.Instance.CardMatchFound += IncrementMatches;
+        CardManager.Instance.WrongCardTurn += IncrementTurns;
+        CardManager.Instance.NewLevelStarted += IncrementLevel;
     }
 
     public void ResetLevel()
