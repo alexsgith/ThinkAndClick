@@ -22,7 +22,6 @@ public class CardPrefabScript : MonoBehaviour
     private void OnCardClicked()
     {
         if(CardManager.Instance.isCardFlipping || isOpened ||CardManager.Instance.CheckCardOpen())return;
-        Debug.Log(CardManager.Instance.isCardFlipping+" "+ isOpened);
         CardManager.Instance.CardFlipCalled(this);
         StartCoroutine(FlipCard());
     }
