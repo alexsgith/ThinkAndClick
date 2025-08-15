@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,7 +8,7 @@ public class CardPrefabScript : MonoBehaviour
     [SerializeField] private Sprite cardBackSprite;
     public Sprite symbolSprite;
     public float flipSpeed = 10;
-    private bool isOpened = true;
+    public bool isOpened = true;
 
     private void OnEnable()
     {
@@ -22,8 +21,8 @@ public class CardPrefabScript : MonoBehaviour
 
     private void OnCardClicked()
     {
+        if(CardManager.Instance.isCardFlipping || isOpened ||CardManager.Instance.CheckCardOpen())return;
         Debug.Log(CardManager.Instance.isCardFlipping+" "+ isOpened);
-        if(CardManager.Instance.isCardFlipping || isOpened)return;
         CardManager.Instance.CardFlipCalled(this);
         StartCoroutine(FlipCard());
     }
@@ -44,7 +43,6 @@ public class CardPrefabScript : MonoBehaviour
     {
         CardManager.Instance.isCardFlipping = true;
         isOpened = !isOpened;
-        Debug.Log("Flipping card: " + gameObject.name + " to " + (isOpened ? "opened" : "closed"));
         float totalRotation = 0f;
         while (totalRotation <= 90f)
         {
@@ -52,7 +50,6 @@ public class CardPrefabScript : MonoBehaviour
             transform.Rotate(Vector3.up, rotationStep);
             totalRotation += rotationStep;
             yield return null;
-            Debug.Log("Total Rotation A: " + totalRotation);
         }
         cardImage.sprite = isOpened ? symbolSprite : cardBackSprite;
         while (totalRotation >= 0f)
@@ -61,8 +58,6 @@ public class CardPrefabScript : MonoBehaviour
             transform.Rotate(Vector3.up, -rotationStep);
             totalRotation -= rotationStep;
             yield return null;
-            Debug.Log("Total Rotation B: " + totalRotation);
-
         }
         transform.rotation = Quaternion.Euler(0f, 0f, 0f);
         CardManager.Instance.isCardFlipping = false;

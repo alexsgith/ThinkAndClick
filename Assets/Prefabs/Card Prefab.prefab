@@ -96,7 +96,7 @@ MonoBehaviour:
   cardImage: {fileID: 7950495829486506369}
   cardBackSprite: {fileID: 21300000, guid: 17ef3353cf010ad4299736982f335a79, type: 3}
   symbolSprite: {fileID: 0}
-  flipSpeed: 200
+  flipSpeed: 350
 --- !u!114 &7614844866261334503
 MonoBehaviour:
   m_ObjectHideFlags: 0
