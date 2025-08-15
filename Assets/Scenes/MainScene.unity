@@ -2659,7 +2659,7 @@ GameObject:
   - component: {fileID: 875766546}
   - component: {fileID: 875766545}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2678,7 +2678,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardSymbols:
-  - {fileID: 21300000, guid: 35338e8366108914c98393c59c6bdab5, type: 3}
   - {fileID: 21300000, guid: 35338e8366108914c98393c59c6bdab5, type: 3}
   - {fileID: 21300000, guid: b12d00caf95b42d4aa72ee59b1056143, type: 3}
   - {fileID: 21300000, guid: 45569cef31b50384b85b81baf2a169c3, type: 3}
